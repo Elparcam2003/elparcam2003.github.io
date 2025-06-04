@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Papelería</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<header id="hero" class="hero" style="display: none;">
+        <img src="images/EncabezadoP.png" alt="Papelería Emprendedora" class="hero-logo">
+</header>
+  <section id="login" class="seccion">
+    <div class="login-container">
+        <img src="images/Sin título (1920 x 1080 px).png" alt="Logo de la Papelería" class="login-logo"> 
+        
+        <h2>Iniciar Sesión</h2>
+        <form id="formLogin">
+            <label for="usuario">Usuario:</label>
+            <input type="text" id="usuario" required>
+
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Ingresar</button>
+        </form>
+        <p id="mensajeError" style="color: red; display: none;">Usuario o contraseña incorrecta.</p>
+    </div>
+</section>
+
+
+    <!-- Contenido oculto hasta que el usuario inicie sesión -->
+    <main id="contenido" style="display: none;">
+        <nav>
+            <button onclick="mostrarSeccion('dolar')"><i class="fas fa-dollar-sign fa-lg"></i> Valor del Dólar</button>
+            <button onclick="mostrarSeccion('inventario')"><i class="fas fa-box fa-lg"></i> Inventario</button>
+            <button onclick="mostrarFormularioVenta()"><i class="fas fa-shopping-cart fa-lg"></i> Realizar Venta</button>
+            <button onclick="mostrarSeccion('comisiones')"><i class="fas fa-user-tie fa-lg"></i> Comisiones de Vendedores</button>
+            <button onclick="mostrarSeccion('ingresos')"><i class="fas fa-chart-line fa-lg"></i> Ingresos por Servicios</button>
+            <button onclick="cerrarSesion()"><i class="fas fa-sign-out-alt fa-lg"></i> Cerrar Sesión</button>
+        </nav>
+
+        <section id="dolar" class="seccion">
+        <h2>Valor del dólar hoy</h2>
+        <p id="valorDolar">Cargando...</p>
+        </section>
+        <section id="ventas" class="seccion">
+            <h2>Realizar Venta</h2>
+            <form id="formVenta">
+                <label for="clienteNombre">Nombre del Cliente:</label>
+                <input type="text" id="clienteNombre" required>
+
+                <label for="vendedorNombre">Vendedor:</label>
+                <select id="vendedorNombre" required>
+                    <option value="Pedro">Pedro</option>
+                    <option value="Ana">Ana</option>
+                    <option value="Luis">Luis</option>
+                </select>
+
+                <label for="articuloSeleccionado">Artículo/Servicio:</label>
+                <select id="articuloSeleccionado" required></select>
+
+                <label for="cantidadVendida">Cantidad:</label>
+                <input type="number" id="cantidadVendida" required>
+
+                <button type="submit">Registrar Venta</button>
+            </form>
+
+            <h2>Historial de Ventas</h2>
+            <ul id="historialVentas"></ul>
+        </section>
+
+        <section id="inventario" class="seccion">
+            <h2>Inventario</h2>
+            <div class="botones-inventario">
+                <button class="agregar-articulo" onclick="mostrarFormularioRegistro()">
+                    <i class="fas fa-plus-circle"></i> Agregar Artículo
+                </button>
+                <button class="eliminar-articulo" onclick="mostrarFormularioEliminar()">
+                    <i class="fas fa-minus-circle"></i> Eliminar Artículo
+                </button>
+            </div>
+            <ul id="listaInventario"></ul>
+        </section>
+
+        <section id="registro-articulo" class="seccion" style="display: none;">
+            <h2>Registrar Nuevo Artículo</h2>
+            <form id="formRegistro">
+                <label for="nombreArticulo">Nombre del artículo:</label>
+                <input type="text" id="nombreArticulo" required>
+
+                <label for="precioArticulo">Precio (Bs):</label>
+                <input type="number" id="precioArticulo" required>
+
+                <label for="stockArticulo">Stock:</label>
+                <input type="number" id="stockArticulo" required>
+
+                <button type="submit">Registrar Artículo</button>
+            </form>
+        </section>
+
+        <section id="eliminar-articulo-form" class="seccion" style="display: none;">
+            <h2>Eliminar Artículo</h2>
+            <form id="formEliminar">
+                <label for="nombreEliminar">Nombre del artículo a eliminar:</label>
+                <input type="text" id="nombreEliminar" required>
+
+                <button type="submit">Eliminar Artículo</button>
+            </form>
+        </section>
+
+        <section id="comisiones" class="seccion">
+            <h2>Comisiones de Vendedores</h2>
+            <ul id="listaComisiones"></ul>
+        </section>
+
+        <section id="ingresos" class="seccion">
+            <h2>Ingresos por Servicios</h2>
+            <ul id="listaIngresos"></ul>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

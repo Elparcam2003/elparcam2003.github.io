@@ -1,0 +1,165 @@
+body {
+    background-image: url("images/fondo4.png"); /* Cambia por la ruta de tu imagen */
+    background-size: cover; /* Ajusta la imagen al tamaño completo */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que se repita */
+    height: 100vh; /* Asegura que el cuerpo ocupe toda la altura de la pantalla */
+    margin: 0; /* Elimina márgenes que puedan crear espacios blancos */
+    padding: 0;
+}
+
+
+header {
+    color: rgb(98, 95, 95);
+    padding: 20px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+nav {
+    text-align: center;
+    padding: 15px;
+    background: none;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+button {
+    padding: 12px 20px;
+    background: linear-gradient(45deg, #1d62ad, #1b1b59);
+    color: rgb(248, 243, 243);
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #3101a2, #002b5e);
+    transform: scale(1.05);
+}
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centrado vertical */
+    align-items: center; /* Centrado horizontal */
+    height: 70vh;
+}
+
+.login-logo {
+    width: 100%; /* Se adapta al contenedor */
+    max-width: 500px; /* Limita el tamaño máximo */
+    height: flex; /* Mantiene la proporción correcta */
+    display: block;
+    margin: 0 auto; /* Centra horizontalmente */
+}
+
+/* Estilos del formulario */
+#formLogin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#formLogin label {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#formLogin input {
+    width: 250px;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: 1px solid #1800f2;
+}
+
+#formLogin button {
+    background: linear-gradient(45deg, #007bff, #004a99);
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+#formLogin button:hover {
+    background: linear-gradient(45deg, #0352a7, #002b5e);
+    transform: scale(1.05);
+}
+
+.hero-logo {
+    width: 50%;
+    max-width: 1000px; /* Ajusta el ancho */
+    display: block;
+    margin: 0 auto; /* Centra la imagen */
+}
+
+/* Efecto de tarjetas */
+.seccion {
+    display: block;
+    margin: 10px auto;
+    padding: 30px; /* Reducir padding para evitar desplazamiento */
+    background-color: #f3eaea;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    text-align: center; /* Centrar contenido dentro de la tarjeta */
+}
+
+/* Títulos */
+h2 {
+    font-size: 22px;
+    text-align: center;
+    color: #004a99;
+}
+
+/* Listas */
+ul {
+    padding: 0;
+    list-style: none;
+    text-align: center;
+}
+
+ul li {
+    padding: 10px;
+    border-bottom: 1px solid #000000;
+    font-size: 18px;
+}
+
+ul li:last-child {
+    border-bottom: none;
+}
+
+/* Botones de Inventario */
+.botones-inventario {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.agregar-articulo, .eliminar-articulo {
+    background: linear-gradient(45deg, #28a745, #218838);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.eliminar-articulo {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+}
+
+.agregar-articulo:hover, .eliminar-articulo:hover {
+    transform: scale(1.05);
+}
