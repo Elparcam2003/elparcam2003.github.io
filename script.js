@@ -1,4 +1,4 @@
-// Variables globales
+// En un futuro podeer agregar trabajadores a la lista desde el menu
 let vendedores = [
     { nombre: "Pedro", totalVentas: 0, comision: 0 },
     { nombre: "Ana", totalVentas: 0, comision: 0 },
@@ -12,21 +12,21 @@ let ingresosPorServicio = {
 };
 
 let ventas = [];
-
+// Modificable desde el menu
 let inventario = [
     { id: 1, nombre: "Resma de papel", precio: 10, stock: 5, stockMinimo: 2 },
     { id: 2, nombre: "Cartuchos de tinta", precio: 15, stock: 3, stockMinimo: 1 },
     { id: 3, nombre: "Bolígrafos", precio: 1, stock: 10, stockMinimo: 5 }
 ];
 
-// Función para mostrar una sección específica
+// Función para mostrar una sección especifica
 function mostrarSeccion(id) {
     document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
     let seleccionada = document.getElementById(id);
     if (seleccionada) seleccionada.style.display = "block";
 }
 
-// Inicialización al cargar la página
+// Inicializacion al cargar la pagina
 document.addEventListener("DOMContentLoaded", function() {
     mostrarSeccion("dolar");
     obtenerValorDolar();
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarArticulos();
 });
 
-// Función para registrar una venta de artículos o servicios
+// funcion para registrar una venta de artículos o servicios
 document.getElementById("formVenta").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -102,21 +102,37 @@ function mostrarHistorialVentas() {
         let item = document.createElement("li");
         item.textContent = `Cliente: ${venta.cliente}, ${venta.articulo} vendido por ${venta.vendedor} - ${venta.cantidad} unidades = ${venta.total} Bs`;
         lista.appendChild(item);
+    
     });
 }
-
 document.addEventListener("DOMContentLoaded", function() {
-    verificarSesion(); // Al cargar, verificar si el usuario está autenticado
+    verificarSesion();// Al cargar verificar si el usuario esta autenticado
+
+    const formRegistro = document.getElementById("formRegistro");
+    if (formRegistro) {
+        formRegistro.addEventListener("submit", function(e) {
+            e.preventDefault(); 
+            agregarArticulo();
+        });
+    }
+
+    const formEliminar = document.getElementById("formEliminar");
+    if (formEliminar) {
+        formEliminar.addEventListener("submit", function(e) {
+            e.preventDefault(); 
+            eliminarArticulo();
+        });
+    }
 });
 
-// Lista de usuarios permitidos
+// Lista de usuarios permitidos(Futuro:Agregar un apartado de perfil para eliminar o agregar usuarios y claves)
 const usuariosValidos = [
     { usuario: "admin", password: "1234" },
     { usuario: "pedro", password: "5678" },
     { usuario: "ana", password: "abcd" }
 ];
 
-// Función para iniciar sesión
+// Funcion para iniciar sesion
 document.getElementById("formLogin").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -126,22 +142,22 @@ document.getElementById("formLogin").addEventListener("submit", function(event) 
     let usuarioEncontrado = usuariosValidos.find(u => u.usuario === usuario && u.password === password);
 
     if (usuarioEncontrado) {
-        sessionStorage.setItem("usuarioActivo", usuario); // Guardar sesión temporalmente
-        mostrarPaginaPrincipal(); // Redirigir a la página principal
+        sessionStorage.setItem("usuarioActivo", usuario);
+        mostrarPaginaPrincipal();
     } else {
         document.getElementById("mensajeError").style.display = "block";
     
     }
 });
 
-// Función para mostrar la página principal después del login
+// Funcion para mostrar la pagina principal despues del login
 function mostrarPaginaPrincipal() {
     document.getElementById("login").style.display = "none"; // Oculta el login
-    document.getElementById("contenido").style.display = "block"; // Muestra la página principal
+    document.getElementById("contenido").style.display = "block"; // muestra la pagina principal
     document.getElementById("hero").style.display = "block"; // Mostrar el encabezado
 }
 
-// Función para verificar si hay sesión activa
+// funcion para verificar si hay sesion activa
 function verificarSesion() {
     let usuarioActivo = sessionStorage.getItem("usuarioActivo");
     if (usuarioActivo) {
@@ -152,14 +168,14 @@ function verificarSesion() {
     }
 }
 
-// Función para cerrar sesión
+// Funcin para cerrar sesión
 function cerrarSesion() {
     sessionStorage.removeItem("usuarioActivo"); // Eliminar sesión
     location.reload(); // Recargar la página para volver al login
 }
 
 
-// Función para mostrar inventario corregido
+// funcion para mostrar inventario
 function mostrarInventario() {
     let lista = document.getElementById("listaInventario");
     lista.innerHTML = "<h2>Inventario</h2>";
@@ -182,7 +198,7 @@ function mostrarFormularioVenta() {
     if (formularioVenta) {
         formularioVenta.style.display = "block"; 
     }
-    cargarArticulos(); // Asegura que los artículos del inventario estén disponibles
+    cargarArticulos();
 }
 
 function mostrarResumenIngresos() {
@@ -199,7 +215,7 @@ function mostrarResumenIngresos() {
     resumen.appendChild(lista);
 }
 
-// Función para cargar artículos en el formulario de ventas
+// Funcion para cargar artículos en el formulario de ventas
 function cargarArticulos() {
     let select = document.getElementById("articuloSeleccionado");
     select.innerHTML = ""; 
@@ -220,7 +236,67 @@ function cargarArticulos() {
     });
 }
 
-// Obtener valor del dólar desde una API externa
+function mostrarFormularioRegistro() {
+    document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
+    let seccionRegistro = document.getElementById("registro-articulo");
+    if (seccionRegistro) {
+        seccionRegistro.style.display = "block";
+    }
+}
+
+function mostrarFormularioEliminar() {
+    document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
+    let seccionEliminar = document.getElementById("eliminar-articulo-form");
+    if (seccionEliminar) {
+        seccionEliminar.style.display = "block";
+    }
+}
+
+function agregarArticulo() {
+    let nombre = document.getElementById("nombreArticulo").value.trim();
+    let precio = parseFloat(document.getElementById("precioArticulo").value);
+    let stock = parseInt(document.getElementById("stockArticulo").value);
+    let stockMinimo = parseInt(document.getElementById("stockMinimoArticulo").value);
+
+    if (!nombre || isNaN(precio) || isNaN(stock) || isNaN(stockMinimo)) {
+        alert("Por favor, ingresa datos válidos.");
+        return;
+    }
+
+    let nuevoArticulo = {
+        id: inventario.length + 1,
+        nombre: nombre,
+        precio: precio,
+        stock: stock,
+        stockMinimo: stockMinimo
+    };
+
+    inventario.push(nuevoArticulo);
+    mostrarInventario();
+
+    alert(`Artículo "${nombre}" agregado correctamente.`);
+    document.getElementById("formRegistro").reset();
+}
+
+function eliminarArticulo() {
+    let nombre = document.getElementById("nombreEliminar").value.trim();
+
+    let index = inventario.findIndex(item => item.nombre.toLowerCase() === nombre.toLowerCase());
+
+    if (index === -1) {
+        alert("Artículo no encontrado.");
+        return;
+    }
+
+    inventario.splice(index, 1);
+    mostrarInventario(); 
+
+    alert(`Artículo "${nombre}" eliminado correctamente.`);
+    document.getElementById("formEliminar").reset();
+}
+
+
+// Obtener valor del dolar(Api Externa)
 async function obtenerValorDolar() {
     try {
         const respuesta = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
