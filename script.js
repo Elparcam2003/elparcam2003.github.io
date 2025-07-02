@@ -5,14 +5,14 @@ let vendedores = [
     { nombre: "Luis", totalVentas: 0, comision: 0 }
 ];
 let ventas = [];
-// Modificable desde el menu(Eliminar/Agregar)
+// Modificable desde el menu
 let inventario = [
     { id: 1, nombre: "Resma de papel", precio: 10, stock: 5, stockMinimo: 2 },
     { id: 2, nombre: "Cartuchos de tinta", precio: 15, stock: 3, stockMinimo: 1 },
     { id: 3, nombre: "Bolígrafos", precio: 1, stock: 10, stockMinimo: 5 }
 ];
 
-// para mostrar una sección especifica
+// Función para mostrar una sección especifica
 function mostrarSeccion(id) {
   document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
   const seleccionada = document.getElementById(id);
@@ -33,11 +33,12 @@ function showToast(msg, type = 'info') {
   div.className = `toast toast--${type}`;
   div.textContent = msg;
   container.appendChild(div);
+  // Se elimina solo tras la animación completa (3s aprox)
   setTimeout(() => container.removeChild(div), 3400);
 }
 
 
-// inicializacion al cargar la pagina
+// Inicializacion al cargar la pagina
 document.addEventListener("DOMContentLoaded", function() {
     mostrarSeccion("dolar");
     obtenerValorDolar();
@@ -48,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarArticulos();
 });
 
-// Para registrar una venta de articulos o servicios
+// funcion para registrar una venta de artículos o servicios
 document.getElementById("formVenta").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -90,7 +91,7 @@ ventas.push({ fecha: Date.now(), cliente, vendedor, articulo, cantidad, total: t
     document.getElementById("formVenta").reset();
 });
 
-// mostrar historial de ventas (eliminando codigo duplicado)
+// Función para mostrar historial de ventas (eliminando código duplicado)
 function mostrarComisiones() {
     let resumen = document.getElementById("comisiones");
     resumen.innerHTML = "<h2>Comisiones de Vendedores</h2>";
@@ -128,7 +129,7 @@ function mostrarHistorialVentas() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    verificarSesion();// verificar si el usuario esta autenticado
+    verificarSesion();// Al cargar verificar si el usuario esta autenticado
 
     const formRegistro = document.getElementById("formRegistro");
     if (formRegistro) {
@@ -148,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("buscarHistorial")
         .addEventListener("input", filterHistorial);
 
-// Para organizar el encabezado en el historial
+// Click en encabezados para ordenar
 document.querySelectorAll("#tablaHistorialVentas th")
   .forEach(th => {
     th.addEventListener("click", () => {
@@ -165,7 +166,7 @@ const usuariosValidos = [
 ];
 
 
-// para iniciar sesion
+// Funcion para iniciar sesion
 document.getElementById("formLogin").addEventListener("submit", function(e) {
   e.preventDefault();
   let u = document.getElementById("usuario").value.trim();
@@ -173,20 +174,20 @@ document.getElementById("formLogin").addEventListener("submit", function(e) {
   let found = usuariosValidos.find(x => x.usuario === u && x.password === p);
   if (found) {
     sessionStorage.setItem("usuarioActivo", u);
-    sessionStorage.setItem("rolActivo", found.role);    // guarda el rol
+    sessionStorage.setItem("rolActivo", found.role);    // ← guardamos el rol
     mostrarPaginaPrincipal();
   } else {
     document.getElementById("mensajeError").style.display = "block";
   }
 });
 
-// verificar si hay sesion activa
+// funcion para verificar si hay sesion activa
 function verificarSesion() {
     let usuarioActivo = sessionStorage.getItem("usuarioActivo");
     if (usuarioActivo) {
         mostrarPaginaPrincipal();
     } else {
-        document.getElementById("login").style.display = "block"; // moostrar login
+        document.getElementById("login").style.display = "block"; // Mostrar login
         document.getElementById("contenido").style.display = "none"; // Ocultar contenido
     }
 }
@@ -202,13 +203,13 @@ function applyRolePermissions() {
   }
 }
 
-// mostrar la pagina principal despues del login
+// Funcion para mostrar la pagina principal despues del login
 function mostrarPaginaPrincipal() {
   document.getElementById("login").style.display = "none";
   document.getElementById("hero").style.display  = "block";
   document.getElementById("contenido").style.display = "block";
 
-  applyRolePermissions();  // visibilidad de botones
+  applyRolePermissions();  // ← aplicamos visibilidad de botones
 }
 
 function mostrarSeccion(id) {
@@ -270,7 +271,7 @@ function mostrarReporteIngresos() {
     return;
   }
 
-  // Calculos
+  // Cálculos
   const total = ventas.reduce((acc, v) => acc + v.total, 0);
   const count = ventas.length;
   const avg   = count ? (total / count).toFixed(2) : 0;
@@ -296,7 +297,7 @@ function mostrarReporteIngresos() {
   });
 }
 
-// ara cargar articulos en el formulario de ventas
+// Funcion para cargar artículos en el formulario de ventas
 function cargarArticulos() {
     let select = document.getElementById("articuloSeleccionado");
     select.innerHTML = ""; 
@@ -405,7 +406,7 @@ function eliminarArticulo() {
   mostrarSeccion("inventario");
 }
 
-//valor del dolar(Api Externa)
+// Obtener valor del dolar(Api Externa)
 async function obtenerValorDolar() {
     try {
         const respuesta = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
@@ -422,7 +423,7 @@ async function obtenerValorDolar() {
 let currentSort = { key: null, asc: true };
 
 /**
- * Renderiza filas segun el array dado.
+ * Renderiza filas en la tabla según el array dado.
  */
 function renderHistorial(data) {
   const tbody = document.querySelector("#tablaHistorialVentas tbody");
@@ -450,7 +451,7 @@ function renderHistorial(data) {
 }
 
 /**
- * Filtrado de ventas por el buscador.
+ * Filtra el array de ventas según el texto del buscador.
  */
 function filterHistorial() {
   const term = document.getElementById("buscarHistorial")
@@ -464,10 +465,10 @@ function filterHistorial() {
 }
 
 /**
- * Ordena el array de ventas por la clave dada.
+ * Ordena tu array de ventas por la clave dada.
  */
 function sortHistorialBy(key) {
-  // togle asc/desc
+  // Toggle asc/desc
   if (currentSort.key === key) {
     currentSort.asc = !currentSort.asc;
   } else {
@@ -477,7 +478,7 @@ function sortHistorialBy(key) {
 
   ventas.sort((a, b) => {
     let va = a[key], vb = b[key];
-    // feecha como numero para comparar
+    // Fecha como número para comparar
     if (key === "fecha") {
       va = new Date(va); vb = new Date(vb);
     }
@@ -486,7 +487,7 @@ function sortHistorialBy(key) {
     return 0;
   });
 
-  // Actualpza estilos de encabezados
+  // Actualizar estilos de encabezados
   document.querySelectorAll("#tablaHistorialVentas th")
     .forEach(th => {
       th.classList.remove("sort-asc","sort-desc");
