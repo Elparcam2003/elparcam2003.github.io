@@ -1,4 +1,4 @@
-// En un futuro podeer agregar trabajadores a la lista desde el menu
+// En un futuro podeer agregar trabajadores a la lista desde el menu Apartado
 let vendedores = [
     { nombre: "Pedro", totalVentas: 0, comision: 0 },
     { nombre: "Ana", totalVentas: 0, comision: 0 },
@@ -12,7 +12,7 @@ let inventario = [
     { id: 3, nombre: "Bolígrafos", precio: 1, stock: 10, stockMinimo: 5 }
 ];
 
-// Función para mostrar una sección especifica
+//   Para mostrar una seccion especifica
 function mostrarSeccion(id) {
   document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
   const seleccionada = document.getElementById(id);
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
     cargarArticulos();
 });
 
-// funcion para registrar una venta de artículos o servicios
+//para registrar una venta de articulos o servicios
 document.getElementById("formVenta").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -91,7 +91,7 @@ ventas.push({ fecha: Date.now(), cliente, vendedor, articulo, cantidad, total: t
     document.getElementById("formVenta").reset();
 });
 
-// Función para mostrar historial de ventas (eliminando código duplicado)
+// Para mostrar historial de ventas (eliminando codigo duplicado)
 function mostrarComisiones() {
     let resumen = document.getElementById("comisiones");
     resumen.innerHTML = "<h2>Comisiones de Vendedores</h2>";
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("buscarHistorial")
         .addEventListener("input", filterHistorial);
 
-// Click en encabezados para ordenar
+// para ordenar encabezado de historial
 document.querySelectorAll("#tablaHistorialVentas th")
   .forEach(th => {
     th.addEventListener("click", () => {
@@ -158,7 +158,7 @@ document.querySelectorAll("#tablaHistorialVentas th")
 });
 });
 
-// Lista de usuarios permitidos(Futuro:Agregar un apartado de perfil para eliminar o agregar usuarios y claves)
+// Lista de usuarios permitidos(futro:Agregar un apartado de perfil para eliminar o agregar usuarios y claves)
 const usuariosValidos = [
   { usuario: "admin", password: "1234", role: "admin" },
   { usuario: "pedro", password: "5678", role: "vendedor" },
@@ -174,14 +174,14 @@ document.getElementById("formLogin").addEventListener("submit", function(e) {
   let found = usuariosValidos.find(x => x.usuario === u && x.password === p);
   if (found) {
     sessionStorage.setItem("usuarioActivo", u);
-    sessionStorage.setItem("rolActivo", found.role);    // ← guardamos el rol
+    sessionStorage.setItem("rolActivo", found.role);    // guardamos el rol
     mostrarPaginaPrincipal();
   } else {
     document.getElementById("mensajeError").style.display = "block";
   }
 });
 
-// funcion para verificar si hay sesion activa
+//para verificar si hay sesion activa
 function verificarSesion() {
     let usuarioActivo = sessionStorage.getItem("usuarioActivo");
     if (usuarioActivo) {
@@ -203,13 +203,13 @@ function applyRolePermissions() {
   }
 }
 
-// Funcion para mostrar la pagina principal despues del login
+//  mostrar la pagina principal despues del login
 function mostrarPaginaPrincipal() {
   document.getElementById("login").style.display = "none";
   document.getElementById("hero").style.display  = "block";
   document.getElementById("contenido").style.display = "block";
 
-  applyRolePermissions();  // ← aplicamos visibilidad de botones
+  applyRolePermissions();  // aplicamos visibilidad de botones
 }
 
 function mostrarSeccion(id) {
@@ -231,9 +231,9 @@ function mostrarSeccion(id) {
   if (id === 'ingresos') mostrarReporteIngresos();
 }
 
-// Funcin para cerrar sesión
+// Funcin para cerrar sesion
 function cerrarSesion() {
-    sessionStorage.removeItem("usuarioActivo"); // Eliminar sesión
+    sessionStorage.removeItem("usuarioActivo"); // Eliminar sesion
     location.reload(); // Recargar la página para volver al login
 }
 
@@ -271,7 +271,7 @@ function mostrarReporteIngresos() {
     return;
   }
 
-  // Cálculos
+  // Calculos
   const total = ventas.reduce((acc, v) => acc + v.total, 0);
   const count = ventas.length;
   const avg   = count ? (total / count).toFixed(2) : 0;
@@ -297,7 +297,7 @@ function mostrarReporteIngresos() {
   });
 }
 
-// Funcion para cargar artículos en el formulario de ventas
+// Funcion para cargar articulos en el formulario de ventas
 function cargarArticulos() {
     let select = document.getElementById("articuloSeleccionado");
     select.innerHTML = ""; 
@@ -406,7 +406,7 @@ function eliminarArticulo() {
   mostrarSeccion("inventario");
 }
 
-// Obtener valor del dolar(Api Externa)
+// valor del dolar(Api Externa)
 async function obtenerValorDolar() {
     try {
         const respuesta = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
@@ -423,7 +423,7 @@ async function obtenerValorDolar() {
 let currentSort = { key: null, asc: true };
 
 /**
- * Renderiza filas en la tabla según el array dado.
+ * Renderiza filas en la tabla historial segun el array dado.
  */
 function renderHistorial(data) {
   const tbody = document.querySelector("#tablaHistorialVentas tbody");
@@ -451,7 +451,7 @@ function renderHistorial(data) {
 }
 
 /**
- * Filtra el array de ventas según el texto del buscador.
+ * filtra el array de ventas según el texto del buscador.
  */
 function filterHistorial() {
   const term = document.getElementById("buscarHistorial")
@@ -465,7 +465,7 @@ function filterHistorial() {
 }
 
 /**
- * Ordena tu array de ventas por la clave dada.
+ * ordena tu array de ventas por la clave dada.
  */
 function sortHistorialBy(key) {
   // Toggle asc/desc
@@ -478,7 +478,7 @@ function sortHistorialBy(key) {
 
   ventas.sort((a, b) => {
     let va = a[key], vb = b[key];
-    // Fecha como número para comparar
+    // Fecha como nmero para comparar
     if (key === "fecha") {
       va = new Date(va); vb = new Date(vb);
     }
