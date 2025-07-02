@@ -80,7 +80,7 @@ document.getElementById("formVenta").addEventListener("submit", function(event) 
         vendedorObj.comision = vendedorObj.totalVentas * 0.05;
     }
 
-    ventas.push({ fecha: Date.now(), cliente, vendedor, articulo, cantidad, total: totalVenta });
+    ventas.push({fecha:Date.now(), cliente, vendedor, articulo, cantidad, total: totalVenta });
 
     mostrarInventario();
     mostrarComisiones();
