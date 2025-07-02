@@ -4,40 +4,51 @@ let vendedores = [
     { nombre: "Ana", totalVentas: 0, comision: 0 },
     { nombre: "Luis", totalVentas: 0, comision: 0 }
 ];
-
-let ingresosPorServicio = {
-    copias: 0,
-    impresiones: 0,
-    rif: 0
-};
-
 let ventas = [];
-// Modificable desde el menu
+// Modificable desde el menu(Eliminar/Agregar)
 let inventario = [
     { id: 1, nombre: "Resma de papel", precio: 10, stock: 5, stockMinimo: 2 },
     { id: 2, nombre: "Cartuchos de tinta", precio: 15, stock: 3, stockMinimo: 1 },
     { id: 3, nombre: "Bolígrafos", precio: 1, stock: 10, stockMinimo: 5 }
 ];
 
-// Función para mostrar una sección especifica
+// para mostrar una sección especifica
 function mostrarSeccion(id) {
-    document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
-    let seleccionada = document.getElementById(id);
-    if (seleccionada) seleccionada.style.display = "block";
+  document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
+  const seleccionada = document.getElementById(id);
+  if (seleccionada) seleccionada.style.display = "block";
+
+  if (id === "historial") {
+    mostrarHistorialVentas();
+  }
+}
+/**
+Toast.
+  @param {string} msg
+  @param {'success'|'error'|'info'} type
+ */
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toasts');
+  const div = document.createElement('div');
+  div.className = `toast toast--${type}`;
+  div.textContent = msg;
+  container.appendChild(div);
+  setTimeout(() => container.removeChild(div), 3400);
 }
 
-// Inicializacion al cargar la pagina
+
+// inicializacion al cargar la pagina
 document.addEventListener("DOMContentLoaded", function() {
     mostrarSeccion("dolar");
     obtenerValorDolar();
     mostrarInventario();
     mostrarComisiones();
-    mostrarResumenIngresos();
+    mostrarReporteIngresos();
     mostrarHistorialVentas();
     cargarArticulos();
 });
 
-// funcion para registrar una venta de artículos o servicios
+// Para registrar una venta de articulos o servicios
 document.getElementById("formVenta").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -47,7 +58,7 @@ document.getElementById("formVenta").addEventListener("submit", function(event) 
     let cantidad = parseInt(document.getElementById("cantidadVendida").value);
 
     if (cliente === "" || cantidad <= 0) {
-        alert("Por favor, ingresa datos válidos.");
+        showToast("Por favor, ingresa datos válidos.");
         return;
     }
 
@@ -55,7 +66,7 @@ document.getElementById("formVenta").addEventListener("submit", function(event) 
     let esServicio = ["Fotocopias", "Impresiones", "Actualización RIF"].includes(articulo);
 
     if (!esServicio && (!articuloObj || cantidad > articuloObj.stock)) {
-        alert("Stock insuficiente o artículo no disponible.");
+        showToast("Stock insuficiente o artículo no disponible.");
         return;
     }
 
@@ -75,11 +86,11 @@ document.getElementById("formVenta").addEventListener("submit", function(event) 
     mostrarComisiones();
     mostrarHistorialVentas();
 
-    alert(`Venta registrada exitosamente por ${vendedor} para el cliente ${cliente}.`);
+    showToast(`Venta registrada exitosamente por ${vendedor} para el cliente ${cliente}.`);
     document.getElementById("formVenta").reset();
 });
 
-// Función para mostrar historial de ventas (eliminando código duplicado)
+// mostrar historial de ventas (eliminando codigo duplicado)
 function mostrarComisiones() {
     let resumen = document.getElementById("comisiones");
     resumen.innerHTML = "<h2>Comisiones de Vendedores</h2>";
@@ -95,18 +106,29 @@ function mostrarComisiones() {
 }
 
 function mostrarHistorialVentas() {
-    let lista = document.getElementById("historialVentas");
-    lista.innerHTML = "<h2></h2>";
+  const lista = document.getElementById("listaHistorialVentas");
+  if (!lista) return;
 
-    ventas.forEach(venta => {
-        let item = document.createElement("li");
-        item.textContent = `Cliente: ${venta.cliente}, ${venta.articulo} vendido por ${venta.vendedor} - ${venta.cantidad} unidades = ${venta.total} Bs`;
-        lista.appendChild(item);
-    
-    });
+  lista.innerHTML = ""; // Limpia lista previa
+
+   if (ventas.length === 0) {
+    const mensaje = document.createElement("li");
+    mensaje.textContent = "No hay ventas registradas.";
+    mensaje.style.fontStyle = "italic";
+    mensaje.style.color = "#666";
+    lista.appendChild(mensaje);
+    return;
+  }
+
+  ventas.forEach(venta => {
+    const item = document.createElement("li");
+    item.textContent = `Cliente: ${venta.cliente}, ${venta.articulo} vendido por ${venta.vendedor} - ${venta.cantidad} unidades = ${venta.total} Bs`;
+    lista.appendChild(item);
+  });
 }
+
 document.addEventListener("DOMContentLoaded", function() {
-    verificarSesion();// Al cargar verificar si el usuario esta autenticado
+    verificarSesion();// verificar si el usuario esta autenticado
 
     const formRegistro = document.getElementById("formRegistro");
     if (formRegistro) {
@@ -123,49 +145,89 @@ document.addEventListener("DOMContentLoaded", function() {
             eliminarArticulo();
         });
     }
+    document.getElementById("buscarHistorial")
+        .addEventListener("input", filterHistorial);
+
+// Para organizar el encabezado en el historial
+document.querySelectorAll("#tablaHistorialVentas th")
+  .forEach(th => {
+    th.addEventListener("click", () => {
+      sortHistorialBy(th.dataset.key);
+    });
+});
 });
 
 // Lista de usuarios permitidos(Futuro:Agregar un apartado de perfil para eliminar o agregar usuarios y claves)
 const usuariosValidos = [
-    { usuario: "admin", password: "1234" },
-    { usuario: "pedro", password: "5678" },
-    { usuario: "ana", password: "abcd" }
+  { usuario: "admin", password: "1234", role: "admin" },
+  { usuario: "pedro", password: "5678", role: "vendedor" },
+  { usuario: "ana",  password: "abcd", role: "vendedor" }
 ];
 
-// Funcion para iniciar sesion
-document.getElementById("formLogin").addEventListener("submit", function(event) {
-    event.preventDefault();
 
-    let usuario = document.getElementById("usuario").value.trim();
-    let password = document.getElementById("password").value.trim();
-
-    let usuarioEncontrado = usuariosValidos.find(u => u.usuario === usuario && u.password === password);
-
-    if (usuarioEncontrado) {
-        sessionStorage.setItem("usuarioActivo", usuario);
-        mostrarPaginaPrincipal();
-    } else {
-        document.getElementById("mensajeError").style.display = "block";
-    
-    }
+// para iniciar sesion
+document.getElementById("formLogin").addEventListener("submit", function(e) {
+  e.preventDefault();
+  let u = document.getElementById("usuario").value.trim();
+  let p = document.getElementById("password").value.trim();
+  let found = usuariosValidos.find(x => x.usuario === u && x.password === p);
+  if (found) {
+    sessionStorage.setItem("usuarioActivo", u);
+    sessionStorage.setItem("rolActivo", found.role);    // guarda el rol
+    mostrarPaginaPrincipal();
+  } else {
+    document.getElementById("mensajeError").style.display = "block";
+  }
 });
 
-// Funcion para mostrar la pagina principal despues del login
-function mostrarPaginaPrincipal() {
-    document.getElementById("login").style.display = "none"; // Oculta el login
-    document.getElementById("contenido").style.display = "block"; // muestra la pagina principal
-    document.getElementById("hero").style.display = "block"; // Mostrar el encabezado
-}
-
-// funcion para verificar si hay sesion activa
+// verificar si hay sesion activa
 function verificarSesion() {
     let usuarioActivo = sessionStorage.getItem("usuarioActivo");
     if (usuarioActivo) {
         mostrarPaginaPrincipal();
     } else {
-        document.getElementById("login").style.display = "block"; // Mostrar login
+        document.getElementById("login").style.display = "block"; // moostrar login
         document.getElementById("contenido").style.display = "none"; // Ocultar contenido
     }
+}
+
+function applyRolePermissions() {
+  const role = sessionStorage.getItem("rolActivo");
+  if (role === "vendedor") {
+    // oculta opciones de admin
+    ["btnInventario","btnComisiones","btnIngresos"].forEach(id => {
+      const btn = document.getElementById(id);
+      if (btn) btn.style.display = "none";
+    });
+  }
+}
+
+// mostrar la pagina principal despues del login
+function mostrarPaginaPrincipal() {
+  document.getElementById("login").style.display = "none";
+  document.getElementById("hero").style.display  = "block";
+  document.getElementById("contenido").style.display = "block";
+
+  applyRolePermissions();  // visibilidad de botones
+}
+
+function mostrarSeccion(id) {
+  const role = sessionStorage.getItem("rolActivo");
+  // bloqueos de sección para "vendedor"
+  if (role === "vendedor" && ["inventario","comisiones","ingresos"].includes(id)) {
+    showToast("No tienes permisos para acceder a esta sección","error");
+    return;
+  }
+
+  document.querySelectorAll(".seccion").forEach(s => s.style.display = "none");
+  const s = document.getElementById(id);
+  if (s) s.style.display = "block";
+
+  if (id === "historial") {
+    document.getElementById("buscarHistorial").value = "";
+    renderHistorial(ventas);
+  }
+  if (id === 'ingresos') mostrarReporteIngresos();
 }
 
 // Funcin para cerrar sesión
@@ -201,21 +263,40 @@ function mostrarFormularioVenta() {
     cargarArticulos();
 }
 
-function mostrarResumenIngresos() {
-    let resumen = document.getElementById("ingresos");
-    resumen.innerHTML = "<h2>Ingresos por Servicios</h2>";
+function mostrarReporteIngresos() {
+  const tbody = document.querySelector('#tablaIngresos tbody');
+  if (!tbody) {
+    console.error('✖ No encontré #tablaIngresos tbody en el DOM');
+    return;
+  }
 
-    let lista = document.createElement("ul");
-    Object.entries(ingresosPorServicio).forEach(([servicio, ingreso]) => {
-        let item = document.createElement("li");
-        item.textContent = `${servicio}: ${ingreso} Bs`;
-        lista.appendChild(item);
-    });
+  // Calculos
+  const total = ventas.reduce((acc, v) => acc + v.total, 0);
+  const count = ventas.length;
+  const avg   = count ? (total / count).toFixed(2) : 0;
+  const montos = ventas.map(v => v.total);
+  const maxV = montos.length ? Math.max(...montos) : 0;
+  const minV = montos.length ? Math.min(...montos) : 0;
 
-    resumen.appendChild(lista);
+  // Filas
+  const rows = [
+    ['Total Ventas',        `${total.toFixed(2)} Bs`],
+    ['Número de Ventas',    count],
+    ['Promedio por Venta',  `${avg} Bs`],
+    ['Venta Máxima',        `${maxV.toFixed(2)} Bs`],
+    ['Venta Mínima',        `${minV.toFixed(2)} Bs`]
+  ];
+
+  // Poblamos la tabla
+  tbody.innerHTML = '';
+  rows.forEach(([label, value]) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${label}</td><td>${value}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
-// Funcion para cargar artículos en el formulario de ventas
+// ara cargar articulos en el formulario de ventas
 function cargarArticulos() {
     let select = document.getElementById("articuloSeleccionado");
     select.innerHTML = ""; 
@@ -236,6 +317,17 @@ function cargarArticulos() {
     });
 }
 
+function cargarArticulosEliminar() {
+  const sel = document.getElementById("selectEliminarArticulo");
+  sel.innerHTML = "";              // limpia opciones anteriores
+  inventario.forEach(item => {
+    const opt = document.createElement("option");
+    opt.value = item.nombre;
+    opt.textContent = item.nombre;
+    sel.appendChild(opt);
+  });
+}
+
 function mostrarFormularioRegistro() {
     document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
     let seccionRegistro = document.getElementById("registro-articulo");
@@ -245,12 +337,33 @@ function mostrarFormularioRegistro() {
 }
 
 function mostrarFormularioEliminar() {
-    document.querySelectorAll(".seccion").forEach(seccion => seccion.style.display = "none");
-    let seccionEliminar = document.getElementById("eliminar-articulo-form");
-    if (seccionEliminar) {
-        seccionEliminar.style.display = "block";
-    }
+  cargarArticulosEliminar();                   //  carga opciones
+  document.querySelectorAll(".seccion")
+          .forEach(s => s.style.display = "none");
+  document.getElementById("eliminar-articulo-form")
+          .style.display = "block";
 }
+
+// Manejo del submit para eliminar
+document.getElementById("formEliminar")
+        .addEventListener("submit", function(e) {
+  e.preventDefault(); // prevenimos reload
+  const sel = document.getElementById("selectEliminarArticulo");
+  const nombre = sel.value;
+  if (!nombre) {
+    showToast("Selecciona un artículo para eliminar.", "error");
+    return;
+  }
+  const idx = inventario.findIndex(i => i.nombre === nombre);
+  if (idx < 0) {
+    showToast("Artículo no encontrado.", "error");
+    return;
+  }
+  inventario.splice(idx, 1);
+  mostrarInventario();
+  showToast(`Artículo "${nombre}" eliminado correctamente.`, "success");
+  mostrarSeccion("inventario");
+});
 
 function agregarArticulo() {
     let nombre = document.getElementById("nombreArticulo").value.trim();
@@ -274,29 +387,25 @@ function agregarArticulo() {
     inventario.push(nuevoArticulo);
     mostrarInventario();
 
-    alert(`Artículo "${nombre}" agregado correctamente.`);
+    showToast(`Artículo "${nombre}" agregado correctamente.`);
     document.getElementById("formRegistro").reset();
 }
 
 function eliminarArticulo() {
-    let nombre = document.getElementById("nombreEliminar").value.trim();
-
-    let index = inventario.findIndex(item => item.nombre.toLowerCase() === nombre.toLowerCase());
-
-    if (index === -1) {
-        alert("Artículo no encontrado.");
-        return;
-    }
-
-    inventario.splice(index, 1);
-    mostrarInventario(); 
-
-    alert(`Artículo "${nombre}" eliminado correctamente.`);
-    document.getElementById("formEliminar").reset();
+  const nombre = document.getElementById("selectEliminarArticulo").value;
+  const idx = inventario.findIndex(item => item.nombre === nombre);
+  if (idx < 0) {
+    showToast("Artículo no encontrado.", "error");
+    return;
+  }
+  inventario.splice(idx, 1);
+  mostrarInventario();
+  showToast(`Artículo "${nombre}" eliminado correctamente.`, "success");
+  // volver a inventario o esconder el form
+  mostrarSeccion("inventario");
 }
 
-
-// Obtener valor del dolar(Api Externa)
+//valor del dolar(Api Externa)
 async function obtenerValorDolar() {
     try {
         const respuesta = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
@@ -308,4 +417,82 @@ async function obtenerValorDolar() {
         document.getElementById("valorDolar").textContent = "Error al obtener el valor del dólar";
         console.error("Error al obtener los datos de la API", error);
     }
+}
+
+let currentSort = { key: null, asc: true };
+
+/**
+ * Renderiza filas segun el array dado.
+ */
+function renderHistorial(data) {
+  const tbody = document.querySelector("#tablaHistorialVentas tbody");
+  tbody.innerHTML = "";
+
+  if (data.length === 0) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="6" style="font-style:italic;color:#666;">
+      No hay registros que coincidan.</td>`;
+    return tbody.appendChild(tr);
+  }
+
+  data.forEach(v => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${new Date(v.fecha).toLocaleString()}</td>
+      <td>${v.cliente}</td>
+      <td>${v.articulo}</td>
+      <td>${v.vendedor}</td>
+      <td>${v.cantidad}</td>
+      <td>${v.total.toFixed(2)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/**
+ * Filtrado de ventas por el buscador.
+ */
+function filterHistorial() {
+  const term = document.getElementById("buscarHistorial")
+                     .value.trim().toLowerCase();
+  const filtered = ventas.filter(v =>
+    v.cliente.toLowerCase().includes(term) ||
+    v.articulo.toLowerCase().includes(term) ||
+    v.vendedor.toLowerCase().includes(term)
+  );
+  renderHistorial(filtered);
+}
+
+/**
+ * Ordena el array de ventas por la clave dada.
+ */
+function sortHistorialBy(key) {
+  // togle asc/desc
+  if (currentSort.key === key) {
+    currentSort.asc = !currentSort.asc;
+  } else {
+    currentSort.key = key;
+    currentSort.asc = true;
+  }
+
+  ventas.sort((a, b) => {
+    let va = a[key], vb = b[key];
+    // feecha como numero para comparar
+    if (key === "fecha") {
+      va = new Date(va); vb = new Date(vb);
+    }
+    if (va < vb) return currentSort.asc ? -1 : 1;
+    if (va > vb) return currentSort.asc ? 1 : -1;
+    return 0;
+  });
+
+  // Actualpza estilos de encabezados
+  document.querySelectorAll("#tablaHistorialVentas th")
+    .forEach(th => {
+      th.classList.remove("sort-asc","sort-desc");
+      if (th.dataset.key === key)
+        th.classList.add(currentSort.asc ? "sort-asc":"sort-desc");
+    });
+
+  renderHistorial(ventas);
 }
