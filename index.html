@@ -10,14 +10,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+  <div id="toasts"></div>
 <header id="hero" class="hero" style="display: none;">
         <img src="images/EncabezadoP.png" alt="Papelería Emprendedora" class="hero-logo">
 </header>
-  <section id="login" class="seccion">
+    <section id="login" class="seccion">
     <div class="login-container">
-        <img src="images/Sin título (1920 x 1080 px).png" alt="Logo de la Papelería" class="login-logo"> 
+    <img src="images/Sin título (1920 x 1080 px).png" alt="Logo de la Papelería" class="login-logo"> 
         
-        <h2>Iniciar Sesión</h2>
+    <h2>Iniciar Sesión</h2>
         <form id="formLogin">
             <label for="usuario">Usuario:</label>
             <input type="text" id="usuario" required>
@@ -33,26 +34,39 @@
 
 
     <!-- Ccontenido oculto hasta que el usuario inicie sesion-->
-    <main id="contenido" style="display: none;">
+<main id="contenido" style="display: none;">
         <nav>
-            <button onclick="mostrarSeccion('dolar')"><i class="fas fa-dollar-sign fa-lg"></i> Valor del Dólar</button>
-            <button onclick="mostrarSeccion('inventario')"><i class="fas fa-box fa-lg"></i> Inventario</button>
-            <button onclick="mostrarFormularioVenta()"><i class="fas fa-shopping-cart fa-lg"></i> Realizar Venta</button>
-            <button onclick="mostrarSeccion('comisiones')"><i class="fas fa-user-tie fa-lg"></i> Comisiones de Vendedores</button>
-            <button onclick="mostrarSeccion('ingresos')"><i class="fas fa-chart-line fa-lg"></i> Ingresos por Servicios</button>
-            <button onclick="cerrarSesion()"><i class="fas fa-sign-out-alt fa-lg"></i> Cerrar Sesión</button>
+    <button id="btnDolar"      onclick="mostrarSeccion('dolar')">
+    <i class="fas fa-dollar-sign fa-lg"></i> Valor del Dólar
+    </button>
+    <button id="btnInventario" onclick="mostrarSeccion('inventario')">
+    <i class="fas fa-box fa-lg"></i> Inventario
+    </button>
+    <button id="btnVenta"      onclick="mostrarFormularioVenta()">
+    <i class="fas fa-shopping-cart fa-lg"></i> Realizar Venta
+    </button>
+    <button id="btnHistorial"  onclick="mostrarSeccion('historial')">
+    <i class="fas fa-history fa-lg"></i> Historial de Ventas
+    </button>
+    <button id="btnComisiones" onclick="mostrarSeccion('comisiones')">
+    <i class="fas fa-user-tie fa-lg"></i> Comisiones
+    </button>
+    <button id="btnIngresos"   onclick="mostrarSeccion('ingresos')">
+    <i class="fas fa-chart-line fa-lg"></i> Ingresos
+    </button>
+    <button id="btnCerrar"     onclick="cerrarSesion()">
+    <i class="fas fa-sign-out-alt fa-lg"></i> Cerrar Sesión
+    </button>
         </nav>
-
-        <section id="dolar" class="seccion">
+<section id="dolar" class="seccion">
         <h2>Valor del dólar hoy</h2>
         <p id="valorDolar">Cargando...</p>
-        </section>
-        <section id="ventas" class="seccion">
+</section>
+<section id="ventas" class="seccion">
             <h2>Realizar Venta</h2>
             <form id="formVenta">
                 <label for="clienteNombre">Nombre del Cliente:</label>
                 <input type="text" id="clienteNombre" required>
-
                 <label for="vendedorNombre">Vendedor:</label>
                 <select id="vendedorNombre" required>
                     <option value="Pedro">Pedro</option>
@@ -62,18 +76,41 @@
 
                 <label for="articuloSeleccionado">Artículo/Servicio:</label>
                 <select id="articuloSeleccionado" required></select>
-
                 <label for="cantidadVendida">Cantidad:</label>
                 <input type="number" id="cantidadVendida" required>
-
                 <button type="submit">Registrar Venta</button>
             </form>
+</section>
 
-            <h2>Historial de Ventas</h2>
-            <ul id="historialVentas"></ul>
-        </section>
+<section id="historial" class="seccion" style="display: none;">
+  <h2>Historial de Ventas</h2>
 
-     <section id="inventario" class="seccion">
+  <!-- Buscador -->
+  <input
+    type="text"
+    id="buscarHistorial"
+    placeholder="Buscar por cliente, artículo o vendedor…"
+  />
+
+  <!-- Tabla interactiva -->
+  <table id="tablaHistorialVentas">
+    <thead>
+      <tr>
+        <th data-key="fecha">Fecha</th>
+        <th data-key="cliente">Cliente</th>
+        <th data-key="articulo">Artículo</th>
+        <th data-key="vendedor">Vendedor</th>
+        <th data-key="cantidad">Cant.</th>
+        <th data-key="total">Total (Bs)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!--Filas que se generaran en el script-->
+    </tbody>
+  </table>
+</section>
+
+<section id="inventario" class="seccion">
     <h2>Inventario</h2>
     <div class="botones-inventario">
         <button type="button" class="agregar-articulo" onclick="mostrarFormularioRegistro()">
@@ -108,24 +145,84 @@
 <section id="eliminar-articulo-form" class="seccion" style="display: none;">
   <h2>Eliminar Artículo</h2>
   <form id="formEliminar">
-      <label for="nombreEliminar">Nombre del artículo a eliminar:</label>
-      <input type="text" id="nombreEliminar" required placeholder="Ingresa el nombre del artículo">
-      
+    <label for="selectEliminarArticulo">
+      Selecciona el artículo a eliminar:
+    </label>
+    <select id="selectEliminarArticulo" required>
+      <!-- Opciones generadas dinámicamente -->
+    </select>
+    <div class="form-actions">
       <button type="submit">Eliminar Artículo</button>
+      <button type="button" onclick="mostrarSeccion('inventario')">
+        Cancelar
+      </button>
+    </div>
   </form>
 </section>
 
-        <section id="comisiones" class="seccion">
+<section id="comisiones" class="seccion">
+        <div class="botones-comisiones">
+        <button
+        id="btnAddEmpleado"
+        type="button"
+        onclick="mostrarFormularioRegistroEmpleado()">
+        <i class="fas fa-user-plus"></i> Agregar Empleado
+        </button>
+        <button
+        id="btnRemoveEmpleado"
+        type="button"
+        onclick="mostrarFormularioEliminarEmpleado()">
+        <i class="fas fa-user-minus"></i> Eliminar Empleado
+        </button>
+        </div>
+
+        <ul id="listaComisiones"></ul>
+
             <h2>Comisiones de Vendedores</h2>
             <ul id="listaComisiones"></ul>
         </section>
 
-        <section id="ingresos" class="seccion">
-            <h2>Ingresos por Servicios</h2>
-            <ul id="listaIngresos"></ul>
-        </section>
-    </main>
+<section id="registro-empleado" class="seccion" style="display: none;">
+  <h2>Registrar Nuevo Empleado</h2>
+  <form id="formRegistroEmpleado">
+    <label for="nombreEmpleado">Nombre del empleado:</label>
+    <input type="text" id="nombreEmpleado" required />
+    <label for="roleEmpleado">Rol:</label>
+    <select id="roleEmpleado" required>
+      <option value="vendedor">Vendedor</option>
+      <option value="admin">Administrador</option>
+    </select>
+    <button type="submit">Registrar Empleado</button>
+    <button type="button" onclick="mostrarSeccion('comisiones')">Cancelar</button>
+  </form>
+</section>
+        
+<section id="eliminar-empleado" class="seccion" style="display: none;">
+  <h2>Eliminar Empleado</h2>
+  <form id="formEliminarEmpleado">
+    <label for="selectEliminarEmpleado">Selecciona empleado:</label>
+    <select id="selectEliminarEmpleado" required></select>
+    <div class="form-actions">
+      <button type="submit">Eliminar Empleado</button>
+      <button type="button" onclick="mostrarSeccion('comisiones')">Cancelar</button>
+    </div>
+  </form>
+</section>
 
+<section id="ingresos" class="seccion" style="display: none;">
+  <h2>Reporte de Ingresos</h2>
+  <table id="tablaIngresos">
+    <thead>
+      <tr>
+        <th>Métrica</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+</section>
+    </main>
     <script src="script.js"></script>
 </body>
 </html>
